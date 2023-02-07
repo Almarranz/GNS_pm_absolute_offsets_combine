@@ -84,8 +84,8 @@ gns1 = np.loadtxt(GNS_1off +'stars_calibrated_HK_chip%s_on_gns2_f%sc%s_sxy%s.txt
 
 # WARNING: we have to multiply the x coordinates by -1 for aa to be able to find 
 # the tranformation between GAIA (ra,dec) offsets and GNS (x,y) coordinates 
-# gns1[:,2] = gns1[:,2]*-1#TODO
-gns1[:,3] = gns1[:,3]*-1#TODO
+gns1[:,2] = gns1[:,2]*-1#TODO
+# gns1[:,3] = gns1[:,3]*-1#TODO
 # np.savetxt(GNS_1 +'stars_calibrated_HK_chip%s_sxy%s.txt'%(chip_one,max_sig),gns1, fmt ='%.8f',header='x, dx, y, dy, raH, draH, decH, ddecH, mJ, dmJ, mH, dmH, mK, dmK')
 gns1_coor =  SkyCoord(ra=gns1[:,0], dec=gns1[:,1],unit = 'degree' ,frame = 'fk5',equinox ='J2000',obstime='J2015.4')
 gns1_coor =gns1_coor.transform_to('icrs')
@@ -258,8 +258,8 @@ dxy_des = np.sqrt(dx_des**2 + dy_des**2)
 # Here we are going to cut the Gaia stars over the are of GNS1
 
 gns2 = np.loadtxt(GNS_2off + 'stars_calibrated_H_chip%s_on_gns1_f%sc%s_sxy%s.txt'%(chip_two,field_one,chip_one,max_sig))
-# gns2[:,2] = gns2[:,2]*-1#TODO
-gns2[:,3] = gns2[:,3]*-1#TODO
+gns2[:,2] = gns2[:,2]*-1#TODO
+# gns2[:,3] = gns2[:,3]*-1#TODO
 gns2_coor = SkyCoord(ra= gns2[:,0]*u.degree, dec=gns2[:,1]*u.degree, frame = 'fk5', equinox = 'J2000',obstime='J2022.4')
 gns2_coor = gns2_coor.transform_to('icrs')
 
@@ -436,12 +436,6 @@ gns2_ra_dec = SkyCoord(ra= gns2[:,0]*u.degree, dec=gns2[:,1]*u.degree, frame = '
 gns1_ra_dec =gns1_ra_dec.transform_to('icrs')
 gns2_ra_dec =gns2_ra_dec.transform_to('icrs')
 
-# First we select the foreground stars in GNS2 by matching with GNS1
-max_sep = 0.080 * u.arcsec
-idx,d2d,d3d = gns1_ra_dec.match_to_catalog_sky(gns2_ra_dec,nthneighbor=1)# ,nthneighbor=1 is for 1-to-1 match
-sep_constraint = d2d < max_sep
-gns1_match = gns1_fg[sep_constraint]
-gns2_match_fg = gns2[idx[sep_constraint]]
 
 
 # Then we match with GAIA stars for helping aa to find the transformation
@@ -457,11 +451,13 @@ gns2_match_fg = gns2[idx[sep_constraint]]
 # with the clicking method in IDL
 # =============================================================================
 gaia_coord = SkyCoord(ra = gaia_np2[:,0], dec = gaia_np2[:,1], unit = 'degree',frame = 'icrs',obstime='J2016.0' )
-gns2_coor_match = SkyCoord(ra= gns2_match_fg[:,0]*u.degree, dec=gns2_match_fg[:,1]*u.degree, frame = 'icrs',obstime='J2022.4')
-idx,d2d,d3d = gaia_coord.match_to_catalog_sky(gns2_coor_match,nthneighbor=1)# ,nthneighbor=1 is for 1-to-1 match
+gns2_coord = SkyCoord(ra= gns2[:,0]*u.degree, dec=gns2[:,1]*u.degree, frame = 'icrs',obstime='J2022.4')
+
+max_sep = 0.080*u.arcsec
+idx,d2d,d3d = gaia_coord.match_to_catalog_sky(gns2_coord,nthneighbor=1)# ,nthneighbor=1 is for 1-to-1 match
 sep_constraint = d2d < max_sep
 gaia2_match = gaia_np2[sep_constraint]
-gns2_match = gns2_match_fg[idx[sep_constraint]]
+gns2_match = gns2[idx[sep_constraint]]
 
 x2_mas = gns2_match[:,2]*0.5*0.106*1000
 y2_mas = gns2_match[:,3]*0.5*0.106*1000
