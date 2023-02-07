@@ -333,8 +333,8 @@ ax.legend()
 
 fg = np.where(((gns1[:,5]-gns1[:,10])<1.3) & (np.sqrt(gns1[:,6]**2 + gns1[:,7]**2) <np.mean([gns1[:,6],gns1[:,7]])))
 
-gns1_fg = gns1[fg]
-# gns1_fg = gns1
+# gns1_fg = gns1[fg]
+gns1_fg = gns1
 # We cross matchh the stars in gns1 with Gaia in order to help astroalign 
 # to find the trasnformation
 
@@ -399,7 +399,7 @@ while abs(check_x) >max_offset or abs(check_y)>max_offset  :# only when tranform
 fig, ax = plt.subplots(1,1,figsize =(10,10))
 ax.set_title('Gaia and tranformed GNS1')
 ax.scatter(gaia_match[:,4],gaia_match[:,5],s=100, label ='Gaia1 offsets (mas)')
-ax.scatter(test_gns[:,0],test_gns[:,1],s=20, label = 'GNS1 aa (mas)')
+ax.scatter(test_gns[:,0],test_gns[:,1],s=20, label = 'GNS1 aa (mas)\nRot = %.1fº \n$Tras_{(x, y)}$ = (%.0f, %.0f)'%(m.rotation * 180.0 /np.pi,m.translation[0],m.translation[1]))
 ax.legend()
 gns1[:,2:4] = aa.matrix_transform(gns1[:,2:4]*0.5*0.106*1000, m.params)
 np.savetxt(GNS_1off + 'aa_stars_calibrated_HK_chip%s_on_gns2_f%sc%s_sxy%s.txt'%(chip_one,field_two,chip_two,max_sig),gns1,
@@ -513,7 +513,7 @@ while abs(check_x) >max_offset or abs(check_y)>max_offset  :# only when tranform
 fig, ax = plt.subplots(1,1,figsize =(10,10))
 ax.set_title('Gaia and tranformed GNS2')
 ax.scatter(gaia2_match[:,4],gaia2_match[:,5],s=100, label = 'Gaia') 
-ax.scatter(test_gns2[:,0],test_gns2[:,1],s=20, label = 'GNS2 matches \nwith Gaia (after aa)')
+ax.scatter(test_gns2[:,0],test_gns2[:,1],s=20, label = 'GNS2 aa (mas)\nRot = %.1fº \n$Tras_{(x, y)}$ = (%.0f, %.0f)'%(m2.rotation * 180.0 /np.pi,m2.translation[0],m2.translation[1]))
 ax.legend(loc =2)
 
 
